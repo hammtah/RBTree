@@ -212,3 +212,26 @@ private:
     }
 };
 
+
+class Reader {
+public:
+    RBTree<string> text;
+    void readFile(string file) {
+        int i = 0;
+        string name;
+        ifstream inputFile(file);
+        // if (!inputFile.is_open()) {
+        //     throw std::runtime_error("Error opening File");
+        // }
+        // while (inputFile >> name) {
+        while (getline(inputFile, name)) {
+            // cout << "inserting " << name << " " << i++ << endl;
+            text.insert(name);
+        }
+        inputFile.close();
+    }
+
+    void print() {
+        text.inorder();
+    }
+};
