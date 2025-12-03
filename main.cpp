@@ -20,16 +20,25 @@ long measureExecutionTime(Func callback) {
 
 int main() {
     Reader reader;
-    // auto start = chrono::high_resolution_clock::now();  // start timer
-    // reader.readFile("/home/taha/CLionProjects/redblacktree/words.txt");
-    // auto end = chrono::high_resolution_clock::now();    // end timer
-    // auto duration = std::chrono::duration_cast<chrono::milliseconds>((end - start));
-    auto callback = [&reader](){reader.readFile("/home/taha/CLionProjects/redblacktree/words.txt");};
-    cout << "Filling Tree Execution time: " << measureExecutionTime(callback) << " ms" << endl;
+    //Inserting
+    auto insert = [&reader](){reader.readFile("/home/taha/CLionProjects/redblacktree/words.txt");};
+    cout << "Filling Tree Execution time: " << measureExecutionTime(insert) << " ms" << endl;
 
-    // start = chrono::high_resolution_clock::now();  // start timer
-    reader.text.contains("exaple")? cout << "yes contains": cout << "no not contains";
-    // cout << "Do you want to read file ?" << endl;
-    // reader.print();
+    //Searching
+    string str = "example";
+    reader.text.contains(str)? (cout << "The file contains "<< str << endl) : (cout << "file does not contains "<< str << endl);
+    auto search = [&reader](){reader.text.contains("example");};
+    cout << "Searching in Tree Execution time: " << measureExecutionTime(search) << " ms" << endl;
+
+
+    //
+    //
+    // auto start = std::chrono::high_resolution_clock::now();     // start timer
+    // reader.text.contains("example");                                    // execute the function
+    // auto end =  std::chrono::high_resolution_clock::now();       // end timer
+    //
+    // auto duration = std::chrono::duration_cast<std::chrono::milliseconds>((end - start));
+    // cout << "Duration for searching: " << duration.count() << endl;
+
     return 0;
 }
