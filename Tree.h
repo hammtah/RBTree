@@ -30,9 +30,9 @@ private:
     };
 
 public:
-    RBTree() : comp(Compare()), root(nullptr) {}
+    RBTree() : comp(Compare()), root(nullptr), node_count(0) {}
 
-    explicit RBTree(Compare cmp) : comp(std::move(cmp)), root(nullptr) {}
+    explicit RBTree(Compare cmp) : comp(std::move(cmp)), root(nullptr), node_count(0) {}
 
     ~RBTree() {
         clear();
@@ -66,6 +66,7 @@ public:
         }
 
         // Fix Red-Black properties
+        node_count++;
         fixInsert(z);
     }
 
@@ -84,14 +85,30 @@ public:
         std::cout << std::endl;
     }
 
+    // Print the tree sideways (right subtree up), including node colors.
+    void printTree(std::ostream& os = std::cout) const {
+        std::function<void(Node*, int)> print = [&](Node* n, int depth) {
+            if (!n) return;
+            print(n->right, depth + 1);
+            for (int i = 0; i < depth; ++i) os << "    ";
+            os << n->key << (n->color == RED ? " (R)" : " (B)") << '\n';
+            print(n->left, depth + 1);
+        };
+        print(root, 0);
+    }
+
+    size_t size() const { return node_count; }
+
     void clear() {
         clearRec(root);
         root = nullptr;
+        node_count = 0;
     }
 
 private:
     Compare comp;
     Node* root;
+    size_t node_count;
 
     static Color colorOf(Node* n) {
         return n == nullptr ? BLACK : n->color;
@@ -249,6 +266,7 @@ public:
         }
 
         delete y;
+        --node_count;
         return true;
     }
 

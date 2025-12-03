@@ -30,7 +30,9 @@ int main() {
     auto search = [&reader](){reader.text.contains("example");};
     cout << "Searching in Tree Execution time: " << measureExecutionTime(search) << " ms" << endl;
 
+    reader.text.printTree();
 
+    cout << "Size of Tree: " << reader.text.size() << endl;
     //
     //
     // auto start = std::chrono::high_resolution_clock::now();     // start timer
