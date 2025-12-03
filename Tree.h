@@ -1,4 +1,5 @@
 
+#include <map>
 //
 // Created by taha on 10/15/25.
 //
@@ -13,6 +14,7 @@ using namespace std;
 
 enum Color { RED, BLACK };
 
+//We can define our comparator to customize keys comparison
 template <typename Key, typename Compare = std::less<Key>>
 class RBTree {
 private:
@@ -224,14 +226,16 @@ public:
         throw std::runtime_error("Error opening File");
         }
         // while (inputFile >> name) {
+        int a = 0;
         while (getline(inputFile, name)) {
             // cout << "inserting " << name << " " << i++ << endl;
+            // text.insert({name, a++});
             text.insert(name);
         }
         inputFile.close();
     }
 
     void print() {
-        text.inorder();
+        // text.inorder();
     }
 };
