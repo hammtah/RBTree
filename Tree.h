@@ -46,13 +46,10 @@ public:
         Node* x = root;
         while (x != nullptr) {
             y = x;
-            if (!comp(z->key, x->key) && !comp(x->key, z->key)) {
-                // No duplicates for simplicity: keys equivalent under comparator
-                delete z;
-                return;
-            } else if (comp(z->key, x->key)) {
+            if (comp(z->key, x->key)) {
                 x = x->left;
             } else {
+                // On equal keys, go right to allow duplicates
                 x = x->right;
             }
         }

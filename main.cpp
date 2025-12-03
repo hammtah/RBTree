@@ -30,7 +30,11 @@ int main() {
     auto search = [&reader](){reader.text.contains("example");};
     cout << "Searching in Tree Execution time: " << measureExecutionTime(search) << " ms" << endl;
 
-    reader.text.printTree();
+    // reader.text.printTree();
+    cout << "Size of Tree: " << reader.text.size() << endl;
+
+    auto del = [&reader](){reader.text.erase("geabznrp");};
+    cout << "Deleting Execution time: " << measureExecutionTime(del) << " ms" << endl;
 
     cout << "Size of Tree: " << reader.text.size() << endl;
     //
