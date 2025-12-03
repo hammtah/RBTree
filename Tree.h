@@ -202,7 +202,7 @@ private:
     static void inorderRec(Node* n) {
         if (n == nullptr) return;
         inorderRec(n->left);
-        std::cout << n->key << (n->color == RED ? "R " : "B ");
+        std::cout << n->key << (n->color == RED ? "R " : "B ") << endl;
         inorderRec(n->right);
     }
 
@@ -211,6 +211,127 @@ private:
         clearRec(n->left);
         clearRec(n->right);
         delete n;
+    }
+
+public:
+    // Delete a key from the RBTree. Returns true if a node was removed.
+    bool erase(const Key& key) {
+        Node* z = findNode(key);
+        if (z == nullptr) return false;
+
+        // If z has two children, copy successor's key into z and delete the successor node instead.
+        Node* y = z;
+        if (z->left != nullptr && z->right != nullptr) {
+            y = minimum(z->right);
+            z->key = y->key;
+        }
+
+        // Now y has at most one child
+        Node* child = (y->left != nullptr) ? y->left : y->right;
+        Node* yParent = y->parent;
+        Color yOriginalColor = colorOf(y);
+
+        // Replace y with its child
+        if (child != nullptr) {
+            child->parent = yParent;
+        }
+        if (yParent == nullptr) {
+            root = child;
+        } else if (y == yParent->left) {
+            yParent->left = child;
+        } else {
+            yParent->right = child;
+        }
+
+        if (yOriginalColor == BLACK) {
+            // child can be nullptr; pass yParent to allow proper sibling lookup
+            fixDelete(child, yParent);
+        }
+
+        delete y;
+        return true;
+    }
+
+    // Convenience alias
+    bool remove(const Key& key) { return erase(key); }
+
+private:
+    Node* findNode(const Key& key) const {
+        Node* x = root;
+        while (x != nullptr) {
+            if (!comp(key, x->key) && !comp(x->key, key)) return x;
+            if (comp(key, x->key)) x = x->left;
+            else x = x->right;
+        }
+        return nullptr;
+    }
+
+    Node* minimum(Node* n) const {
+        if (n == nullptr) return nullptr;
+        while (n->left != nullptr) n = n->left;
+        return n;
+    }
+
+    void fixDelete(Node* x, Node* xParent) {
+        // x may be nullptr; treat nullptr as black using colorOf
+        while (x != root && colorOf(x) == BLACK) {
+            if (x == (xParent ? xParent->left : nullptr)) {
+                Node* w = xParent ? xParent->right : nullptr; // sibling
+                if (colorOf(w) == RED) {
+                    setColor(w, BLACK);
+                    setColor(xParent, RED);
+                    leftRotate(xParent);
+                    w = xParent ? xParent->right : nullptr;
+                }
+                if (colorOf(w ? w->left : nullptr) == BLACK &&
+                    colorOf(w ? w->right : nullptr) == BLACK) {
+                    setColor(w, RED);
+                    x = xParent;
+                    xParent = x ? x->parent : nullptr;
+                } else {
+                    if (colorOf(w ? w->right : nullptr) == BLACK) {
+                        setColor(w ? w->left : nullptr, BLACK);
+                        setColor(w, RED);
+                        rightRotate(w);
+                        w = xParent ? xParent->right : nullptr;
+                    }
+                    setColor(w, colorOf(xParent));
+                    setColor(xParent, BLACK);
+                    setColor(w ? w->right : nullptr, BLACK);
+                    leftRotate(xParent);
+                    x = root;
+                    xParent = nullptr;
+                }
+            } else {
+                Node* w = xParent ? xParent->left : nullptr; // sibling (mirror)
+                if (colorOf(w) == RED) {
+                    setColor(w, BLACK);
+                    setColor(xParent, RED);
+                    rightRotate(xParent);
+                    w = xParent ? xParent->left : nullptr;
+                }
+                if (colorOf(w ? w->left : nullptr) == BLACK &&
+                    colorOf(w ? w->right : nullptr) == BLACK) {
+                    setColor(w, RED);
+                    x = xParent;
+                    xParent = x ? x->parent : nullptr;
+                } else {
+                    if (colorOf(w ? w->left : nullptr) == BLACK) {
+                        setColor(w ? w->right : nullptr, BLACK);
+                        setColor(w, RED);
+                        leftRotate(w);
+                        w = xParent ? xParent->left : nullptr;
+                    }
+                    setColor(w, colorOf(xParent));
+                    setColor(xParent, BLACK);
+                    setColor(w ? w->left : nullptr, BLACK);
+                    rightRotate(xParent);
+                    x = root;
+                    xParent = nullptr;
+                }
+            }
+        }
+        setColor(x, BLACK);
     }
 };
 
@@ -236,6 +357,6 @@ public:
     }
 
     void print() {
-        // text.inorder();
+        text.inorder();
     }
 };
